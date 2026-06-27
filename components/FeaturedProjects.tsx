@@ -8,6 +8,9 @@ import { useI18n } from '@/lib/i18n'
 import { PROJECTS } from '@/lib/data'
 import Link from 'next/link'
 
+const ensureHttps = (url: string) =>
+  url.startsWith('http') ? url : `https://${url}`
+
 const cardVariants = {
   hidden: { opacity: 0, y: 40 },
   show: (i: number) => ({
@@ -109,13 +112,13 @@ export default function FeaturedProjects() {
               {/* Hover overlay */}
               <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-[2px]">
                 {project.url && (
-                  <a href={project.url} target="_blank" rel="noopener noreferrer"
+                  <a href={ensureHttps(project.url)} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors">
                     <ExternalLink size={14} /> Visit
                   </a>
                 )}
                 {project.github && (
-                  <a href={project.github} target="_blank" rel="noopener noreferrer"
+                  <a href={ensureHttps(project.github)} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors">
                     <Github size={14} /> Code
                   </a>
@@ -134,13 +137,13 @@ export default function FeaturedProjects() {
                 </h3>
                 <div className="flex gap-1.5 ml-2 flex-shrink-0">
                   {project.url && (
-                    <a href={project.url} target="_blank" rel="noopener noreferrer"
+                    <a href={ensureHttps(project.url)} target="_blank" rel="noopener noreferrer"
                       className="p-1.5 rounded-lg bg-white/5 hover:bg-indigo-500/20 text-slate-400 hover:text-indigo-300 transition-all">
                       <ExternalLink size={13} />
                     </a>
                   )}
                   {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer"
+                    <a href={ensureHttps(project.github)} target="_blank" rel="noopener noreferrer"
                       className="p-1.5 rounded-lg bg-white/5 hover:bg-indigo-500/20 text-slate-400 hover:text-indigo-300 transition-all">
                       <Github size={13} />
                     </a>
