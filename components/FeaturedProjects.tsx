@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ExternalLink, Github, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
@@ -18,7 +19,16 @@ const cardVariants = {
 
 export default function FeaturedProjects() {
   const { t, lang } = useI18n()
-  const featured = PROJECTS.filter((p) => p.featured)
+  const [allProjects, setAllProjects] = useState<any[]>(PROJECTS)
+
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data) && data.length > 0) setAllProjects(data) })
+      .catch(() => {})
+  }, [])
+
+  const featured = allProjects.filter((p) => p.featured)
 
   return (
     <section id="projects" className="py-20 px-8 lg:px-16">
@@ -62,16 +72,24 @@ export default function FeaturedProjects() {
           >
             {/* Preview image */}
             <div className="relative h-44 overflow-hidden flex-shrink-0 bg-navy-800">
-              {(project as any).preview ? (
+              {project.preview ? (
                 <>
-                  <Image
-                    src={(project as any).preview}
-                    alt={project.title}
-                    fill
-                    className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  {/* Subtle dark overlay */}
+                  {project.preview.startsWith('http') ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={project.preview}
+                      alt={project.title}
+                      className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <Image
+                      src={project.preview}
+                      alt={project.title}
+                      fill
+                      className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628]/80 via-transparent to-transparent" />
                 </>
               ) : (
@@ -88,37 +106,24 @@ export default function FeaturedProjects() {
                 </div>
               )}
 
-              {/* Hover overlay with link */}
+              {/* Hover overlay */}
               <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-[2px]">
                 {project.url && (
-                  <a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors"
-                  >
-                    <ExternalLink size={14} />
-                    Visit
+                  <a href={project.url} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors">
+                    <ExternalLink size={14} /> Visit
                   </a>
                 )}
                 {project.github && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors"
-                  >
-                    <Github size={14} />
-                    Code
+                  <a href={project.github} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium hover:bg-white/20 transition-colors">
+                    <Github size={14} /> Code
                   </a>
                 )}
               </div>
 
-              {/* Colored accent line at top */}
-              <div
-                className="absolute top-0 left-0 right-0 h-0.5"
-                style={{ background: `linear-gradient(90deg, ${project.color}, ${project.color}40)` }}
-              />
+              <div className="absolute top-0 left-0 right-0 h-0.5"
+                style={{ background: `linear-gradient(90deg, ${project.color}, ${project.color}40)` }} />
             </div>
 
             {/* Content */}
@@ -129,22 +134,14 @@ export default function FeaturedProjects() {
                 </h3>
                 <div className="flex gap-1.5 ml-2 flex-shrink-0">
                   {project.url && (
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-white/5 hover:bg-indigo-500/20 text-slate-400 hover:text-indigo-300 transition-all"
-                    >
+                    <a href={project.url} target="_blank" rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-indigo-500/20 text-slate-400 hover:text-indigo-300 transition-all">
                       <ExternalLink size={13} />
                     </a>
                   )}
                   {project.github && (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-white/5 hover:bg-indigo-500/20 text-slate-400 hover:text-indigo-300 transition-all"
-                    >
+                    <a href={project.github} target="_blank" rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg bg-white/5 hover:bg-indigo-500/20 text-slate-400 hover:text-indigo-300 transition-all">
                       <Github size={13} />
                     </a>
                   )}
@@ -152,16 +149,13 @@ export default function FeaturedProjects() {
               </div>
 
               <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3 flex-1">
-                {lang === 'uk' ? project.descUk : project.descEn}
+                {lang === 'uk' ? (project.desc_uk ?? project.descUk) : (project.desc_en ?? project.descEn)}
               </p>
 
-              {/* Tags */}
               <div className="flex flex-wrap gap-1.5">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white/5 border border-white/10 text-slate-300"
-                  >
+                {(project.tags ?? []).map((tag: string) => (
+                  <span key={tag}
+                    className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white/5 border border-white/10 text-slate-300">
                     {tag}
                   </span>
                 ))}
@@ -171,19 +165,10 @@ export default function FeaturedProjects() {
         ))}
       </div>
 
-      {/* Mobile view all */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="mt-8 text-center sm:hidden"
-      >
-        <Link
-          href="/projects"
-          className="inline-flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 font-medium"
-        >
-          {t.featured.viewAll}
-          <ArrowRight size={14} />
+      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+        className="mt-8 text-center sm:hidden">
+        <Link href="/projects" className="inline-flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 font-medium">
+          {t.featured.viewAll} <ArrowRight size={14} />
         </Link>
       </motion.div>
     </section>

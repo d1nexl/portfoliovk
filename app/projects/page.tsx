@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ExternalLink, Github, ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
@@ -20,6 +21,14 @@ const cardVariants = {
 
 export default function ProjectsPage() {
   const { t, lang } = useI18n()
+  const [projects, setProjects] = useState<any[]>(PROJECTS)
+
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data) && data.length > 0) setProjects(data) })
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="flex min-h-screen">
@@ -60,7 +69,7 @@ export default function ProjectsPage() {
         {/* Projects Grid */}
         <section className="py-16 px-8 lg:px-16">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {PROJECTS.map((project, i) => (
+            {projects.map((project, i) => (
               <motion.article
                 key={project.id}
                 custom={i}
@@ -148,7 +157,7 @@ export default function ProjectsPage() {
                   </div>
 
                   <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-1">
-                    {lang === 'uk' ? project.descUk : project.descEn}
+                    {lang === 'uk' ? (project.desc_uk ?? project.descUk) : (project.desc_en ?? project.descEn)}
                   </p>
 
                   <div className="flex flex-wrap gap-1.5 mt-auto">
