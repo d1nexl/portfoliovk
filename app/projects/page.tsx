@@ -161,7 +161,7 @@ export default function ProjectsPage() {
                   </p>
 
                   <div className="flex flex-wrap gap-1.5 mt-auto">
-                    {project.tags.map((tag) => (
+                    {project.tags.map((tag: string) => (
                       <span
                         key={tag}
                         className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white/5 border border-white/10 text-slate-300"
