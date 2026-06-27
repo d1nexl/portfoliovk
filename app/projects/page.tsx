@@ -91,12 +91,11 @@ export default function ProjectsPage() {
                 <div className="relative h-44 overflow-hidden flex-shrink-0 bg-navy-800">
                   {(project as any).preview ? (
                     <>
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
                         src={(project as any).preview}
                         alt={project.title}
-                        fill
-                        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628]/80 via-transparent to-transparent" />
                     </>
